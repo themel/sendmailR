@@ -1,0 +1,15 @@
+4472e8a573e906b0ac6ff432f5aadb64 *ChangeLog
+3d28ad362afbe84516ca9d35b9ffda42 *DESCRIPTION
+219cba1a476f307885501c482025d8fa *NAMESPACE
+e99bf583bda8b0401a0cac6f92bb5d6e *R/mime_part.R
+856a6c04c7bb25abf3461c1e51a1ac02 *R/options.R
+2107c590fc5b37a90d010291295e868e *R/sendmailR.r
+8c536d1d566f570fca2b7cb6c5ac688b *man/mime_part.Rd
+1c90ef1ba320903177448836bd09fcb1 *man/mime_part.character.Rd
+16c739ff97db9c48c236ea82d6b58e04 *man/mime_part.data.frame.Rd
+77edf47484fecaf49fd1480485c68784 *man/mime_part.default.Rd
+1b0e99bad5e69cc8553c9aaff2546b1f *man/mime_part.ggplot.Rd
+76334ffa20c0e61c9cf514619c26956c *man/mime_part.matrix.Rd
+0cbf1ffdc9ad386c1e7ff6f24d369097 *man/mime_part.trellis.Rd
+019abbe3f6416784998aab74abf135c1 *man/sendmail.Rd
+65346135eeddf7efbe109c09df72b8a6 *man/sendmail_options.Rd

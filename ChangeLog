@@ -1,0 +1,29 @@
+commit 99d5dca47ffd2dde522295e425c91923ec8a744d
+Author: Olaf Mersmann <olafm@statistik.tu-dortmund.de>
+Date:   2011-10-20 12:57:31 +0200
+
+    Add more sanity checks.
+
+commit af83963ff54acdd3e5c085b52751c1d178f0e4df
+Author: Olaf Mersmann <olafm@statistik.tu-dortmund.de>
+Date:   2011-10-20 12:57:16 +0200
+
+    Remoce dependency on lattice / ggplot2.
+
+commit be7d15688157841175314c62f6c5a1b9dd6741db
+Author: Olaf Mersmann <olafm@statistik.tu-dortmund.de>
+Date:   2011-10-20 12:56:54 +0200
+
+    Add documentation for mime_part.ggplot
+
+commit eae23cf70f34aed79d0c599fe4c6d2163d4c3fe4
+Author: Olaf Mersmann <olafm@statistik.tu-dortmund.de>
+Date:   2011-03-10 00:18:48 +0100
+
+    Remove usage line. Automatically added by roxygen anyway.
+
+commit 90ea6db815903746eeda85d6f787819e63fed804
+Author: Olaf Mersmann <olafm@statistik.tu-dortmund.de>
+Date:   2011-01-31 11:05:17 +0100
+
+    Add mime handling for attachments.
