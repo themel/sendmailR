@@ -34,7 +34,7 @@
   writeLines(sprintf("--%s--", boundary), sock, sep="\r\n")
 }
 
-.smtp_submit_mail <- function(server, port, headers, msg, verbose=FALSE) {
+.smtp_submit_mail <- function(server, port, recipients, headers, msg, verbose=FALSE) {
   stopifnot(is.character(headers$From), is.character(headers$To))
   
   wait_for <- function(lcode) {
@@ -76,21 +76,28 @@
   ## << 220 <hostname> ESMTP
   wait_for(220)
   ## >> HELO localhost
+
+  # convert recipients to mailbox format
+  recipients <- .to_mailbox(recipients)
+  sender <- .to_mailbox(headers$From)
+  # collapse headers into strings
+  headers <- lapply(headers, function(x) paste(x, collapse=", "))
+  
   ## << 250 mail.statistik.uni-dortmund.de
   send_command(paste("HELO ", nodename), 250)
   ## >> MAIL FROM: <foo@bah.com>
   ## << 250 2.1.0 Ok
-  send_command(paste("MAIL FROM: ", headers$From), 250)
+  send_command(paste("MAIL FROM: ", sender), 250)
   ## >> RCPT TO: <bah@baz.org>
   ## << 250 2.1.5 Ok
-  send_command(paste("RCPT TO: ", headers$To), 250)
+  sapply(recipients, function(rcpt) { send_command(paste("RCPT TO: ", rcpt), 250) })
   ## >> DATA
   ## << 354 blah fu
   send_command("DATA", 354)
   ## >> <actual message + headers + .>
   if (verbose)
     message(">> <message data>")
-
+  
   .write_mail(headers, msg, sock)
   
   writeLines(".", sock, sep="\r\n")
@@ -109,11 +116,8 @@ sendmail <- function(from, to, subject, msg, ...,
   ## Argument checks:
   stopifnot(is.list(headers), is.list(control))
   if (length(from) != 1)
-    stop("'from' must be a single address.")
-  
-  if (length(to) != 1)
-    stop("'to' must be a single address.")
-  
+    stop("'from' must be a single address.")  
+
   get_value <- function(n, default="") {
     if (n %in% names(control)) {
       return(control[[n]])
@@ -127,15 +131,40 @@ sendmail <- function(from, to, subject, msg, ...,
   headers$From <- from
   headers$To <- to
   headers$Subject <- subject
-
+  
+  # gather recipients from To,Cc and Bcc headers
+  recipients <- c(headers$To, headers$Cc, headers$Bcc)
+ 
+  # Bcc header is not sent
+  headers$Bcc <- NULL
+  
   transport <- get_value("transport", "smtp")
   verbose <- get_value("verbose", FALSE)
   if (transport == "smtp") {
     server <- get_value("smtpServer", "localhost")
     port <- get_value("smtpPort", 25)
-    
-    .smtp_submit_mail(server, port, headers, msg, verbose)
+	
+    .smtp_submit_mail(server, port, recipients, headers, msg, verbose)
   } else if (transport == "debug") {
     .write_mail(headers, msg, stdout())
   }
 }
+
+# converts the various formats of addresses found in mail headers into
+# SMTP mailbox specs. Should be able to handle 
+# Thorstein Veblen <thorstein.veblen@stanford.edu>
+# thorstein.veblen@stanford.edu
+# <thorstein.veblen@stanford.edu> 
+# and always return the third form. 
+# Gross oversimplification of various standards, and bad 
+# for people with <> characters in their names.
+# of the full RFC 5321 syntax which is described here:
+# http://en.wikipedia.org/wiki/Email_address#Local_part
+.to_mailbox <- function(addresses) {
+	match <- regexpr("[^<]*@[^>]*", addresses)
+	failed <- grep(-1, match)
+	sapply(failed, function(x) { stop(paste("Invalid address:", addresses[failed], collapse=", ")) })
+	paste("<", substring(addresses, match, attr(match, "match.length") + match - 1), ">", sep="")
+}
+	
+ 
